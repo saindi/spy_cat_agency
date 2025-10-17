@@ -1,0 +1,39 @@
+services:
+  db:
+    image: postgres:17.0-alpine3.20
+    container_name: postgres
+    command: -p ${POSTGRES_PORT}
+    env_file:
+      - .env
+    volumes:
+      - spy_cat_agency_pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - spy-cat-network
+    ports:
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+
+  app:
+    build:
+      context: .
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    container_name: api
+    networks:
+      - spy-cat-network
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    depends_on:
+      - db
+
+
+volumes:
+  spy_cat_agency_pg_data:
+    name: spy_cat_agency_pg_data
+    external: true
+
+networks:
+  spy-cat-network:
+    external: true
