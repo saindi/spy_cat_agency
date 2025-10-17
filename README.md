@@ -26,6 +26,16 @@ The API follows modern design principles, utilizing a unit of work and repositor
 *   **Containerization**: Docker & Docker Compose
 *   **Linting/Formatting**: Ruff, pre-commit, mypy
 
+## 📬 Postman Collection
+
+A ready-to-use Postman collection is provided to test all endpoints for Cats and Missions. You can use it to quickly interact with the API, send requests, and view responses.
+
+* Link: [Spy Cat Agency API Postman Collection](https://www.postman.com/gold-comet-981846/workspace/my-workspace/request/23607500-4a3db734-261a-4fdb-9271-740a7d80fc5e?action=share&creator=23607500&active-environment=23607500-56533e4c-403f-4f2a-8b3d-7382f4793ced)
+
+* Included Folders:
+  * Spy Cats – CRUD operations for managing spy cats, including creating, updating, deleting, and listing cats.
+  * Missions – CRUD operations for missions, assigning cats, and managing mission targets.
+
 ## ⚙️ Getting Started
 
 To run the application locally using Docker, follow these steps.
