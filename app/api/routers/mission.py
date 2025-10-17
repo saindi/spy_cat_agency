@@ -77,9 +77,7 @@ async def assign_cat_to_mission(
     mission_id: UUID,
     request: schemas.MissionAssignCatRequest,
 ) -> schemas.Mission:
-    return await service.assign_cat_to_mission(
-        sql_uow=sql_uow, mission_id=mission_id, request=request
-    )
+    return await service.assign_cat_to_mission(sql_uow=sql_uow, mission_id=mission_id, request=request)
 
 
 @router.patch(

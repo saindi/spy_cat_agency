@@ -17,22 +17,17 @@ class SpyCatsService:
                 offset=calc_offset(page, per_page), limit=per_page, return_scheme=True
             )
 
-        return schemas.PaginatedResponse[schemas.Cat](
-            items=cats, count=total_count, per_page=per_page
-        )
+        return schemas.PaginatedResponse[schemas.Cat](items=cats, count=total_count, per_page=per_page)
 
     @staticmethod
     async def create_cat(
         sql_uow: ABCUnitOfWork,
         data: schemas.CatCreateRequest,
     ) -> schemas.Cat:
-
         await data.validate_breed()
 
         async with sql_uow:
-            new_cat = await sql_uow.cat.create(
-                obj_in=data.model_dump(exclude_none=True), return_scheme=True
-            )
+            new_cat = await sql_uow.cat.create(obj_in=data.model_dump(exclude_none=True), return_scheme=True)
 
         return new_cat
 

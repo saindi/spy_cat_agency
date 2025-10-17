@@ -12,6 +12,4 @@ class Mission(Base, UUIDMixin, TimestampMixin):
     complete = Column(Boolean, default=False, index=True)
 
     cat = relationship("SpyCat", back_populates="missions")
-    targets = relationship(
-        "Target", back_populates="mission", cascade="all, delete-orphan"
-    )
+    targets = relationship("Target", back_populates="mission", cascade="all, delete-orphan")

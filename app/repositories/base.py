@@ -39,20 +39,14 @@ class AbstractRepositoryMixin(ABC, Generic[T, S]):
 
     @overload
     @abstractmethod
-    async def create(
-        self, obj_in: dict[str, Any] | T, return_scheme: Literal[True] = ...
-    ) -> S: ...
+    async def create(self, obj_in: dict[str, Any] | T, return_scheme: Literal[True] = ...) -> S: ...
 
     @overload
     @abstractmethod
-    async def create(
-        self, obj_in: dict[str, Any] | T, return_scheme: Literal[False] = ...
-    ) -> T: ...
+    async def create(self, obj_in: dict[str, Any] | T, return_scheme: Literal[False] = ...) -> T: ...
 
     @abstractmethod
-    async def create(
-        self, obj_in: dict[str, Any] | T, return_scheme: bool = False
-    ) -> T | S:
+    async def create(self, obj_in: dict[str, Any] | T, return_scheme: bool = False) -> T | S:
         pass
 
     @abstractmethod
@@ -211,18 +205,12 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         return [self._convert(obj) for obj in objs]
 
     @overload
-    async def create(
-        self, obj_in: dict[str, Any], return_scheme: Literal[True] = ...
-    ) -> S: ...
+    async def create(self, obj_in: dict[str, Any], return_scheme: Literal[True] = ...) -> S: ...
 
     @overload
-    async def create(
-        self, obj_in: dict[str, Any], return_scheme: Literal[False] = ...
-    ) -> T: ...
+    async def create(self, obj_in: dict[str, Any], return_scheme: Literal[False] = ...) -> T: ...
 
-    async def create(
-        self, obj_in: dict[str, Any], return_scheme: bool = False
-    ) -> T | S:
+    async def create(self, obj_in: dict[str, Any], return_scheme: bool = False) -> T | S:
         obj = self.model(**obj_in)
         try:
             self._session.add(obj)
@@ -243,14 +231,8 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         update_columns: list[str],
     ) -> None:
         statement = pg_insert(self.model).values(obj_in)
-        update_dict = {
-            col: getattr(statement.excluded, col)
-            for col in update_columns
-            if col in obj_in
-        }
-        statement = statement.on_conflict_do_update(
-            index_elements=conflict_columns, set_=update_dict
-        )
+        update_dict = {col: getattr(statement.excluded, col) for col in update_columns if col in obj_in}
+        statement = statement.on_conflict_do_update(index_elements=conflict_columns, set_=update_dict)
         await self._session.execute(statement)
         await self._session.flush()
 
@@ -273,9 +255,9 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
 
         update_dict = {col: getattr(statement.excluded, col) for col in update_columns}
 
-        statement = statement.on_conflict_do_update(
-            index_elements=conflict_columns, set_=update_dict
-        ).returning(self.model)
+        statement = statement.on_conflict_do_update(index_elements=conflict_columns, set_=update_dict).returning(
+            self.model
+        )
 
         result = await self._session.execute(statement)
         objs = result.scalars().all()
@@ -306,9 +288,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         options: list[Any] | None = None,
         return_scheme: bool = False,
     ) -> T | S:
-        query = select(self.model).where(
-            and_(*[getattr(self.model, k) == v for k, v in filters.items()])
-        )
+        query = select(self.model).where(and_(*[getattr(self.model, k) == v for k, v in filters.items()]))
         if options:
             query = query.options(*options)
 
@@ -324,9 +304,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         return obj
 
     async def get_one_or_none(self, filters: dict[str, Any]) -> T | None:
-        query = select(self.model).where(
-            and_(*[getattr(self.model, k) == v for k, v in filters.items()])
-        )
+        query = select(self.model).where(and_(*[getattr(self.model, k) == v for k, v in filters.items()]))
         result = await self._session.execute(query)
         obj = result.scalars().first()
         return obj
@@ -352,9 +330,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
 
         if order_by:
             if order_by.startswith("-"):
-                statement = statement.order_by(
-                    desc(getattr(self.model, order_by[1:])).nulls_last()
-                )
+                statement = statement.order_by(desc(getattr(self.model, order_by[1:])).nulls_last())
             else:
                 statement = statement.order_by(asc(getattr(self.model, order_by)))
 
@@ -396,9 +372,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
 
         if order_by:
             if order_by.startswith("-"):
-                statement = statement.order_by(
-                    desc(getattr(self.model, order_by[1:])).nulls_last()
-                )
+                statement = statement.order_by(desc(getattr(self.model, order_by[1:])).nulls_last())
             else:
                 statement = statement.order_by(asc(getattr(self.model, order_by)))
 
@@ -418,9 +392,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
             column_name, action_name = key.split("__")
             column: InstrumentedAttribute = getattr(self.model, column_name)
             if column is None:
-                raise Exception(
-                    f"Column {column_name} not found in {self.model.__name__}"
-                )
+                raise Exception(f"Column {column_name} not found in {self.model.__name__}")
             action: str | None = action_map.get(action_name, None)
             if action is None:
                 raise Exception(f"Action {action_name} not found in action_map")
@@ -450,9 +422,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         updates: dict[str, Any],
         return_scheme: bool = False,
     ) -> T | S:
-        query = select(self.model).where(
-            and_(*[getattr(self.model, k) == v for k, v in filters.items()])
-        )
+        query = select(self.model).where(and_(*[getattr(self.model, k) == v for k, v in filters.items()]))
         result = await self._session.execute(query)
         obj = result.scalars().first()
         if not obj:
@@ -494,12 +464,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         updates: dict[str, Any],
         return_scheme: bool = False,
     ) -> Sequence[T] | list[S]:
-        stmt = (
-            update(self.model)
-            .where(and_(*self.get_where_clauses(filters)))
-            .values(**updates)
-            .returning(self.model)
-        )
+        stmt = update(self.model).where(and_(*self.get_where_clauses(filters))).values(**updates).returning(self.model)
 
         result = await self._session.execute(stmt)
         objs = result.scalars().all()
@@ -512,9 +477,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         return objs
 
     async def delete(self, filters: dict[str, Any]) -> None:
-        query = select(self.model).where(
-            and_(*[getattr(self.model, k) == v for k, v in filters.items()])
-        )
+        query = select(self.model).where(and_(*[getattr(self.model, k) == v for k, v in filters.items()]))
         result = await self._session.execute(query)
         obj = result.scalars().first()
         if not obj:
@@ -528,9 +491,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         await self._session.execute(query)
         await self._session.flush()
 
-    async def upsert(
-        self, obj_in: dict[str, Any], index_columns: list[str]
-    ) -> dict[str, Any]:
+    async def upsert(self, obj_in: dict[str, Any], index_columns: list[str]) -> dict[str, Any]:
         """
         Insert or update database object based on index columns.
 
@@ -568,9 +529,7 @@ class RepositoryMixin(AbstractRepositoryMixin[T, S]):
         fields: list[str],
     ) -> dict[str, Any]:
         columns = [getattr(self.model, field) for field in fields]
-        query = select(*columns).where(
-            and_(*[getattr(self.model, k) == v for k, v in filters.items()])
-        )
+        query = select(*columns).where(and_(*[getattr(self.model, k) == v for k, v in filters.items()]))
 
         result = await self._session.execute(query)
         row = result.first()

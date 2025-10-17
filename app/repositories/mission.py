@@ -10,9 +10,7 @@ class MissionRepository(RepositoryMixin[models.Mission, schemas.Mission]):
     model = models.Mission
     schema = schemas.Mission
 
-    async def get_mission_with_targets(
-        self, filters: dict[str, Any]
-    ) -> schemas.MissionWithTargets:
+    async def get_mission_with_targets(self, filters: dict[str, Any]) -> schemas.MissionWithTargets:
         db_mission = await self.get(
             filters=filters,
             options=[selectinload(models.Mission.targets)],
@@ -21,7 +19,5 @@ class MissionRepository(RepositoryMixin[models.Mission, schemas.Mission]):
 
         return self._convert_with_targets(db_mission=db_mission)
 
-    def _convert_with_targets(
-        self, db_mission: models.Mission
-    ) -> schemas.MissionWithTargets:
+    def _convert_with_targets(self, db_mission: models.Mission) -> schemas.MissionWithTargets:
         return schemas.MissionWithTargets.model_validate(db_mission)
