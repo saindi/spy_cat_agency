@@ -11,7 +11,6 @@ __all__ = [
     "ObjectNotFoundException",
     "ObjectAlreadyExistsException",
     "GoneException",
-    "NotAuthorizedException",
     "ForbiddenException",
     "BadRequestException",
 ]
