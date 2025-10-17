@@ -7,14 +7,14 @@ from app.core import settings
 
 class CatBreedService:
     _instance = None
-    _breeds: set | None = None
+    _breeds: set[str] = set()
 
-    def __new__(cls):
+    def __new__(cls) -> "CatBreedService":
         if cls._instance is None:
             cls._instance = super().__new__(cls)
         return cls._instance
 
-    async def load_breeds(self):
+    async def load_breeds(self) -> None:
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(settings.cat_api.BREED_URL) as response:

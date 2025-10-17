@@ -52,9 +52,7 @@ def _create_development_app() -> FastAPI:
 
 
 def create_app() -> FastAPI:
-    app_factory = (
-        _create_production_app if settings.is_production else _create_development_app
-    )
+    app_factory = _create_production_app if settings.is_production else _create_development_app
     app = app_factory()
 
     _include_router(app)
@@ -69,4 +67,5 @@ if __name__ == "__main__":
         host=settings.SERVER_HOST,
         port=settings.SERVER_PORT,
         reload=settings.RELOAD,
+        factory=True,
     )

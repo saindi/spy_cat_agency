@@ -1,3 +1,4 @@
+from typing import Any
 from uuid import UUID
 
 from app import schemas
@@ -18,9 +19,7 @@ class MissionService:
                 offset=calc_offset(page, per_page), limit=per_page, return_scheme=True
             )
 
-        return schemas.PaginatedResponse[schemas.Mission](
-            items=missions, count=total_count, per_page=per_page
-        )
+        return schemas.PaginatedResponse[schemas.Mission](items=missions, count=total_count, per_page=per_page)
 
     @staticmethod
     async def create_mission(
@@ -28,13 +27,9 @@ class MissionService:
         data: schemas.MissionCreateRequest,
     ) -> schemas.Mission:
         async with sql_uow:
-            mission = await sql_uow.mission.create(
-                obj_in={"name": data.name, "complete": False}, return_scheme=True
-            )
+            mission = await sql_uow.mission.create(obj_in={"name": data.name, "complete": False}, return_scheme=True)
 
-            targets_data = [
-                {**data.model_dump(), "mission_id": mission.id} for data in data.targets
-            ]
+            targets_data = [{**data.model_dump(), "mission_id": mission.id} for data in data.targets]
 
             await sql_uow.target.create_many(obj_in=targets_data)
 
@@ -63,9 +58,7 @@ class MissionService:
             mission = await sql_uow.mission.get(filters=filters)
 
             if mission.cat_id:
-                raise BadRequestException(
-                    "Can't delete a mission that has already been assigned to a cat."
-                )
+                raise BadRequestException("Can't delete a mission that has already been assigned to a cat.")
 
             await sql_uow.mission.delete(filters=filters)
 
@@ -104,11 +97,9 @@ class MissionService:
 
             if request.notes is not None:
                 if target.complete or request.is_completed is True:
-                    raise BadRequestException(
-                        "Can't update notes for a completed target."
-                    )
+                    raise BadRequestException("Can't update notes for a completed target.")
 
-            updates = {}
+            updates: dict[str, Any] = {}
 
             if request.notes is not None:
                 updates["notes"] = request.notes
@@ -119,9 +110,7 @@ class MissionService:
             if updates:
                 await sql_uow.target.update(filters=filters, updates=updates)
 
-            mission = await sql_uow.mission.get_mission_with_targets(
-                filters={"id": mission_id}
-            )
+            mission = await sql_uow.mission.get_mission_with_targets(filters={"id": mission_id})
 
             if all([target.complete for target in mission.targets]):
                 await sql_uow.mission.update(

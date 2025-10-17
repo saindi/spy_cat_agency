@@ -9,7 +9,7 @@ services:
       - spy_cat_agency_pg_data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - spy-cat-network
+      - spy_cat_network
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
 
@@ -22,7 +22,7 @@ services:
       - .:/app
     container_name: api
     networks:
-      - spy-cat-network
+      - spy_cat_network
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
     depends_on:
@@ -35,5 +35,5 @@ volumes:
     external: true
 
 networks:
-  spy-cat-network:
+  spy_cat_network:
     external: true
